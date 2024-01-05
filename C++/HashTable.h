@@ -18,6 +18,9 @@ public:
     HashTable(int size);
     HashTable(size_t size) : array_of_buckets(size) {}
 
+    //insertion
+    void insert(T,U);
+
     // Utility
     int size() { return static_cast<int>(array_of_buckets.size()); }
     auto max_size() { return (array_of_buckets.max_size()); }
@@ -35,4 +38,14 @@ HashTable<T,U>::HashTable(int size) : array_of_buckets(static_cast<size_t>(size 
                   << size << " implicitly gets converted to "
                   << -1 * size << '\n';
 }
+
+//insertion
+template <typename T, typename U>
+void HashTable<T, U>::insert(T key, U value)
+{
+    //function to get index from key
+
+    //implement [] operator to store value
+}
+
 #endif
