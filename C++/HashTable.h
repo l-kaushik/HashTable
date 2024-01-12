@@ -55,7 +55,20 @@ template <typename T, typename U>
 void HashTable<T, U>::insert(T key, U value)
 {
     // function to get index from key
-    array_of_buckets[hashing(key)] = new Node<U>(value); // try to use smart pointers
+    std::size_t index {hashing(key)};
+
+    // check if place is already equipped
+    if(array_of_buckets[index] == nullptr)
+        array_of_buckets[index] = new Node<U>(value); // try to use smart pointers
+    else{
+        // added value in next node
+        Node<U> *temp = array_of_buckets[index];
+        while(temp->getNextNode() != nullptr)
+        {
+            temp = temp->getNextNode();
+        }
+        temp->setNextNode(new Node<U>(value));
+    }
 
     // implement [] operator to store value
 }
