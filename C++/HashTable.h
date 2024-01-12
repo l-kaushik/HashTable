@@ -4,14 +4,22 @@
 #include <iostream>
 #include <type_traits>
 #include <vector>
+#include <utility> // for std::pair
 
 #include "Node.h"
+
+/*
+    TODO:
+    *destructor missing
+    *maybe use of smart pointers
+    *dynamic resizing(rehashing)
+*/
 
 template <typename T, typename U>
 class HashTable
 {
 private:
-    std::vector<Node<U> *> array_of_buckets;
+    std::vector<Node<std::pair<T, U>> *> array_of_buckets;
     
     //helper functions for insertion
     std::size_t hashingHelper(T key, std::true_type);
@@ -30,7 +38,7 @@ public:
     std::size_t hashing(T key); // return index;
 
     // getters
-    U getValue(T key); //@return value
+    auto getValue(T key); //@return value
 
     // Utility
     auto size() { return (array_of_buckets.size()); }
@@ -59,15 +67,12 @@ void HashTable<T, U>::insert(T key, U value)
 
     // check if place is already equipped
     if(array_of_buckets[index] == nullptr)
-        array_of_buckets[index] = new Node<U>(value); // try to use smart pointers
+        array_of_buckets[index] = new Node<std::pair<T, U>>({key, value}); // try to use smart pointers
     else{
-        // added value in next node
-        Node<U> *temp = array_of_buckets[index];
-        while(temp->getNextNode() != nullptr)
-        {
-            temp = temp->getNextNode();
-        }
-        temp->setNextNode(new Node<U>(value));
+        // append a node
+        Node<std::pair<T, U>> *temp {new Node<std::pair<T, U>>({key, value})};
+        temp->setNextNode(array_of_buckets[index]);
+        array_of_buckets[index] = temp;      
     }
 
     // implement [] operator to store value
@@ -97,10 +102,23 @@ std::size_t HashTable<T, U>::hashingHelper(T key, std::false_type) {
 
 // getters
 template <typename T, typename U>
-U HashTable<T, U>::getValue(T key)
+auto HashTable<T, U>::getValue(T key)
 {
     // get index from hashing function
-    return array_of_buckets[hashing(key)]->getValue();
+    std::size_t index {hashing(key)};
+
+    Node<std::pair<T, U>> *temp {array_of_buckets[index]};
+
+    //TODO: raise an error if first/key not found
+    while(temp->getValue().first != key && temp != nullptr)
+    {
+        temp = temp->getNextNode();
+    }
+
+    if(temp != nullptr)
+        return temp->getValue().second;
+    else
+        return 0;   //TODO: raise an error here too
 }
 
 #endif
