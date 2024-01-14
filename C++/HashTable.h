@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <vector>
 #include <utility> // for std::pair
+#include <iomanip>
 
 #include "Node.h"
 
@@ -47,6 +48,9 @@ public:
     // Utility
     auto size() { return (array_of_buckets.size()); }
     auto max_size() { return (array_of_buckets.max_size()); }
+
+    //other
+    void display();
 };
 
 //<---------------------- Method Declarations ---------------------->
@@ -133,6 +137,20 @@ auto HashTable<T, U>::getValue(T key)
         return temp->getValue().second;
     else
         return 0;   //TODO: raise an error here too
+}
+
+// other
+template <typename T, typename U>
+void HashTable<T, U>::display()
+{
+    for(auto &i: array_of_buckets)
+    {
+        while(i != nullptr)
+        {
+            std::cout<<std::setw(6)<<i->getValue().first<<std::setw(10)<<i->getValue().second<<'\n';
+            i = i->getNextNode();
+        }
+    }
 }
 
 #endif
