@@ -13,6 +13,7 @@
     *destructor missing
     *maybe use of smart pointers
     *dynamic resizing(rehashing)
+    *each key should be unique
 */
 
 template <typename T, typename U>
@@ -30,6 +31,9 @@ public:
     HashTable() : array_of_buckets(10) {}
     HashTable(int size);
     HashTable(size_t size) : array_of_buckets(size) {}
+
+    // destructor
+    ~HashTable();
 
     // insertion
     void insert(T key, U value);
@@ -49,13 +53,23 @@ public:
 
 // constructor
 template <typename T, typename U>
-HashTable<T, U>::HashTable(int size) : array_of_buckets(static_cast<size_t>(size < 1 ? -1 * size : size))
+HashTable<T, U>::HashTable(int size) : array_of_buckets(static_cast<size_t>(size < 1 ? std::abs(size) : size))
 {
     if (size < 1)
         std::cerr << "Warning: "
                   << "size = "
                   << size << " implicitly gets converted to "
                   << -1 * size << '\n';
+}
+
+// destructor
+template <typename T, typename U>
+HashTable<T, U>::~HashTable()
+{
+    for(auto &i: array_of_buckets){
+        delete i;
+        i = nullptr;
+    }
 }
 
 // insertion
