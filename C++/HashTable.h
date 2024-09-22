@@ -11,7 +11,6 @@
 
 /*
     TODO:
-    *destructor missing
     *maybe use of smart pointers
     *dynamic resizing(rehashing)
     *each key should be unique
